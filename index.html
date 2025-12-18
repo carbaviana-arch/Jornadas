@@ -2,15 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Horas Pro</title>
-  <link rel="stylesheet" href="style.css?v=1.5">
-  <link rel="manifest" href="manifest.json?v=1.5">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Jornada App</title>
+  <link rel="stylesheet" href="style.css?v=1.6">
+  <link rel="manifest" href="manifest.json?v=1.6">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <header>
-    <h1>⏱️ Registro</h1>
+    <div class="logo">
+      <i class="fas fa-stopwatch-20"></i>
+      <h1>Jornada</h1>
+    </div>
     <label class="switch">
       <input type="checkbox" id="darkToggle">
       <span class="slider"></span>
@@ -71,22 +74,26 @@
         </div>
       </div>
 
-      <button id="exportPdf" class="btn-secondary">Exportar Reporte PDF</button>
+      <div class="card">
+        <button id="exportPdfBtn" class="btn-secondary">
+          <i class="fas fa-file-pdf"></i> Generar Reporte PDF
+        </button>
+      </div>
     </section>
   </main>
 
   <nav class="dock">
     <button class="dock-item active" data-view="view-home">
-      <i class="fas fa-plus-circle"></i>
+      <i class="fas fa-calendar-plus"></i>
       <span>Registro</span>
     </button>
     <button class="dock-item" data-view="view-stats">
-      <i class="fas fa-chart-bar"></i>
+      <i class="fas fa-chart-pie"></i>
       <span>Resumen</span>
     </button>
   </nav>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js?v=1.5"></script>
+  <script src="script.js?v=1.6"></script>
 </body>
 </html>
