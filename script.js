@@ -1,125 +1,87 @@
 const { jsPDF } = window.jspdf;
 
-const form = document.getElementById("registro-form");
-const historialEl = document.getElementById("historial");
-const totalHorasEl = document.getElementById("total-horas");
-const resumenDiaEl = document.getElementById("resumen-dia");
-const resumenSemanaEl = document.getElementById("resumen-semana");
-const resumenMesEl = document.getElementById("resumen-mes");
-const darkToggle = document.getElementById("darkToggle");
-const exportPdfBtn = document.getElementById("exportPdf");
+// Elementos UI
+const views = document.querySelectorAll('.view');
+const dockItems = document.querySelectorAll('.dock-item');
+const filtroEmpleado = document.getElementById("filtro-empleado");
 
 let registros = JSON.parse(localStorage.getItem("registros")) || [];
 
-// Guardar registro
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  const fecha = document.getElementById("fecha").value;
-  const entrada = document.getElementById("entrada").value;
-  const salida = document.getElementById("salida").value;
-  if (!fecha || !entrada || !salida) return;
+// --- NAVEGACIÓN DOCK ---
+dockItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const targetView = item.getAttribute('data-view');
+    
+    // Cambiar estado de botones
+    dockItems.forEach(btn => btn.classList.remove('active'));
+    item.classList.add('active');
 
-  registros.push({ fecha, entrada, salida });
-  localStorage.setItem("registros", JSON.stringify(registros));
-  form.reset();
-  render();
+    // Cambiar visibilidad de secciones
+    views.forEach(view => {
+      view.id === targetView ? view.classList.remove('hidden') : view.classList.add('hidden');
+    });
+    render();
+  });
 });
 
-// Eliminar registro
-function eliminarRegistro(index) {
-  registros.splice(index, 1);
-  localStorage.setItem("registros", JSON.stringify(registros));
-  render();
-}
+// --- LÓGICA DE REGISTRO ---
+document.getElementById("registro-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const reg = {
+    empleado: document.getElementById("empleado").value,
+    fecha: document.getElementById("fecha").value,
+    entrada: document.getElementById("entrada").value,
+    salida: document.getElementById("salida").value
+  };
 
-// Calcular minutos trabajados
+  registros.push(reg);
+  localStorage.setItem("registros", JSON.stringify(registros));
+  e.target.reset();
+  render();
+  alert("¡Jornada guardada correctamente!");
+});
+
 function calcularMinutos(entrada, salida) {
   const [h1, m1] = entrada.split(":").map(Number);
   const [h2, m2] = salida.split(":").map(Number);
-  let inicio = h1*60 + m1;
-  let fin = h2*60 + m2;
-  if (fin < inicio) fin += 24*60;
-  return fin - inicio;
+  let min = (h2 * 60 + m2) - (h1 * 60 + m1);
+  return min < 0 ? min + 1440 : min;
 }
 
-// Convertir minutos a hh:mm
-function minutosAHoras(minutos) {
-  const h = Math.floor(minutos/60);
-  const m = minutos%60;
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+function minutosAHoras(min) {
+  return `${String(Math.floor(min/60)).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;
 }
 
-// Renderizar
+// --- RENDERIZADO Y FILTROS ---
+filtroEmpleado.addEventListener("change", render);
+
 function render() {
+  const historialEl = document.getElementById("historial");
   historialEl.innerHTML = "";
-  let totalMin = 0, hoyMin = 0, semanaMin = 0, mesMin = 0;
-  const hoy = new Date().toISOString().slice(0,10);
-  const fechaActual = new Date();
-  const mesActual = fechaActual.getMonth();
-  const semanaActual = getWeekNumber(fechaActual);
+  
+  const filtro = filtroEmpleado.value;
+  let totalMin = 0;
+  let diasSet = new Set();
 
-  registros.forEach((r,i)=>{
+  registros.forEach((r, i) => {
     const min = calcularMinutos(r.entrada, r.salida);
-    totalMin += min;
-
-    if(r.fecha===hoy) hoyMin += min;
-    const f = new Date(r.fecha);
-    if(getWeekNumber(f)===semanaActual) semanaMin += min;
-    if(f.getMonth()===mesActual && f.getFullYear()===fechaActual.getFullYear()) mesMin += min;
-
+    
+    // Render historial (solo últimos 5 si estamos en home)
     const li = document.createElement("li");
-    li.innerHTML = `
-      <span>${r.fecha} (${r.entrada} - ${r.salida})</span>
-      <span>${minutosAHoras(min)} <button onclick="eliminarRegistro(${i})">✕</button></span>
-    `;
-    historialEl.appendChild(li);
+    li.innerHTML = `<div><strong>${r.empleado}</strong><br><small>${r.fecha}</small></div>
+                    <span>${minutosAHoras(min)}</span>`;
+    historialEl.prepend(li);
+
+    // Cálculos para Estadísticas
+    if (filtro === "todos" || r.empleado === filtro) {
+      totalMin += min;
+      diasSet.add(r.fecha);
+    }
   });
 
-  totalHorasEl.textContent = minutosAHoras(totalMin);
-  resumenDiaEl.textContent = minutosAHoras(hoyMin);
-  resumenSemanaEl.textContent = minutosAHoras(semanaMin);
-  resumenMesEl.textContent = minutosAHoras(mesMin);
+  document.getElementById("stat-total").textContent = minutosAHoras(totalMin);
+  document.getElementById("stat-dias").textContent = diasSet.size;
 }
 
-// Semana ISO
-function getWeekNumber(date) {
-  date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-  return Math.ceil((((date - yearStart)/86400000) +1)/7);
-}
-
-// Dark Mode Switch
-if(localStorage.getItem("darkMode")==="true"){
-  document.body.classList.add("dark");
-  darkToggle.checked = true;
-}
-darkToggle.addEventListener("change",()=>{
-  document.body.classList.toggle("dark");
-  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
-});
-
-// Exportar PDF
-exportPdfBtn.addEventListener("click",()=>{
-  const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("Informe de Horas", 20, 20);
-  doc.setFontSize(12);
-  doc.text(`Total: ${totalHorasEl.textContent}`, 20, 30);
-  doc.text(`Hoy: ${resumenDiaEl.textContent}`, 20, 38);
-  doc.text(`Semana: ${resumenSemanaEl.textContent}`, 20, 46);
-  doc.text(`Mes: ${resumenMesEl.textContent}`, 20, 54);
-
-  let y = 64;
-  registros.forEach(r=>{
-    const min = calcularMinutos(r.entrada,r.salida);
-    doc.text(`${r.fecha} (${r.entrada}-${r.salida}) - ${minutosAHoras(min)}`, 20, y);
-    y += 8;
-    if(y > 280){ doc.addPage(); y = 20; }
-  });
-
-  doc.save("registro-horas.pdf");
-});
-
+// Inicializar
 render();
