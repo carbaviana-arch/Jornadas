@@ -9,62 +9,44 @@ body.dark {
   --dock-bg: rgba(28, 28, 30, 0.85);
 }
 
-/* FIX: Evita que los inputs se salgan del marco */
 * { box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, system-ui, sans-serif;
+  font-family: -apple-system, sans-serif;
   background: var(--bg); color: var(--text);
   margin: 0; padding-bottom: 90px;
-  overflow-x: hidden; /* Evita scroll horizontal accidental */
+  overflow-x: hidden;
 }
 
 header { 
-  padding: 1rem 1.5rem; 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  background: var(--card);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; 
+  background: var(--card); border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .logo { display: flex; align-items: center; gap: 10px; color: var(--primary); }
 .logo i { font-size: 1.8rem; }
-.logo h1 { font-size: 1.4rem; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
+.logo h1 { font-size: 1.3rem; margin: 0; font-weight: 800; }
 
 .view { padding: 1rem; max-width: 500px; margin: 0 auto; width: 100%; }
 .hidden { display: none; }
 
 .card { 
-  background: var(--card); 
-  padding: 1.2rem; 
-  border-radius: 18px; 
-  margin-bottom: 1rem; 
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  width: 100%;
+  background: var(--card); padding: 1.2rem; border-radius: 18px; 
+  margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* Ajuste de grid para inputs */
-.grid-inputs { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 12px; 
-  width: 100%;
-}
+.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 input, select, button {
-  width: 100%; /* Ahora respeta el contenedor gracias a border-box */
-  padding: 12px; 
-  margin: 8px 0; 
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.1); 
-  background: var(--card); 
-  color: var(--text); 
+  width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1); background: var(--card); color: var(--text);
   font-size: 1rem;
-  appearance: none; /* Estética limpia en iOS */
 }
 
-/* El resto de los estilos (Dock, Stats, etc.) se mantienen igual que la v1.5 */
+.btn-primary { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
+.btn-secondary { background: #5856d6; color: white; border: none; font-weight: bold; cursor: pointer; }
+
+/* Dock */
 .dock {
   position: fixed; bottom: 0; width: 100%; height: 75px;
   background: var(--dock-bg); backdrop-filter: blur(15px);
@@ -73,15 +55,24 @@ input, select, button {
 }
 .dock-item { background: none; border: none; color: var(--secondary); display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .dock-item.active { color: var(--primary); }
+
+/* Listas */
+#historial, #employee-list-admin { list-style: none; padding: 0; }
+#historial li, #employee-list-admin li { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); 
+}
+#employee-list-admin li { background: rgba(0,0,0,0.02); padding: 10px; border-radius: 10px; margin-bottom: 5px; }
+
+.info-registro strong { color: var(--primary); display: block; }
+.btn-delete { background: #ff3b30; color: white; border: none; padding: 4px 10px; border-radius: 8px; width: auto; cursor: pointer; }
+
+/* Stats */
 .grid-resumen { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
 .stat-card { text-align: center; }
-.stat-card h3 { margin: 5px 0 0; font-size: 1.6rem; color: var(--primary); }
-#historial { list-style: none; padding: 0; }
-#historial li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-.info-registro strong { display: block; color: var(--primary); }
-.btn-delete { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 6px; width: auto; }
-button[type="submit"] { background: var(--primary); color: white; border: none; font-weight: bold; }
-.btn-secondary { background: #5856d6; color: white; border: none; font-weight: bold; }
+.stat-card h3 { margin: 5px 0 0; font-size: 1.5rem; color: var(--primary); }
+
+/* Switch */
 .switch { position: relative; width: 46px; height: 24px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
