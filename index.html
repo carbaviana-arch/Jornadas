@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Jornada App</title>
-  <link rel="stylesheet" href="style.css?v=1.6">
-  <link rel="manifest" href="manifest.json?v=1.6">
+  <link rel="stylesheet" href="style.css?v=1.7">
+  <link rel="manifest" href="manifest.json?v=1.7">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -27,19 +27,14 @@
         <form id="registro-form">
           <label>Empleado:
             <select id="empleado" required>
-              <option value="" disabled selected>Selecciona tu nombre...</option>
-              <option value="Juan Pérez">Juan Pérez</option>
-              <option value="María García">María García</option>
-              <option value="Carlos Ruiz">Carlos Ruiz</option>
-              <option value="Ana López">Ana López</option>
-            </select>
+              </select>
           </label>
           <label>Fecha: <input type="date" id="fecha" required></label>
           <div class="grid-inputs">
             <label>Entrada: <input type="time" id="entrada" required></label>
             <label>Salida: <input type="time" id="salida" required></label>
           </div>
-          <button type="submit">Guardar Jornada</button>
+          <button type="submit" class="btn-primary">Guardar Jornada</button>
         </form>
       </div>
 
@@ -54,12 +49,7 @@
         <h2>Resumen por Empleado</h2>
         <label>Filtrar por persona:
           <select id="filtro-empleado">
-            <option value="todos">Todos los empleados</option>
-            <option value="Juan Pérez">Juan Pérez</option>
-            <option value="María García">María García</option>
-            <option value="Carlos Ruiz">Carlos Ruiz</option>
-            <option value="Ana López">Ana López</option>
-          </select>
+            </select>
         </label>
       </div>
 
@@ -80,6 +70,23 @@
         </button>
       </div>
     </section>
+
+    <section id="view-settings" class="view hidden">
+      <div class="card">
+        <h2><i class="fas fa-users-cog"></i> Gestionar Equipo</h2>
+        <form id="add-employee-form">
+          <label>Nuevo Empleado:
+            <input type="text" id="new-employee-name" placeholder="Nombre del empleado" required>
+          </label>
+          <button type="submit" class="btn-primary">Añadir al Equipo</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Lista de Empleados</h3>
+        <ul id="employee-list-admin"></ul>
+      </div>
+    </section>
   </main>
 
   <nav class="dock">
@@ -91,9 +98,13 @@
       <i class="fas fa-chart-pie"></i>
       <span>Resumen</span>
     </button>
+    <button class="dock-item" data-view="view-settings">
+      <i class="fas fa-user-cog"></i>
+      <span>Equipo</span>
+    </button>
   </nav>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js?v=1.6"></script>
+  <script src="script.js?v=1.7"></script>
 </body>
 </html>
